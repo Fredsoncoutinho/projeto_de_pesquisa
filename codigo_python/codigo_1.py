@@ -14,7 +14,7 @@ from datetime import datetime
  
 
 
-# ------global variáveis
+# ------variaveis globais
 arrayDadosTermopar = np.array([0])
 arrayDadosPirometro = np.array([0])
 cols = ['Termopar','Pirometro(real)', 'Pirômetro(simulado)','Data/Hora']
