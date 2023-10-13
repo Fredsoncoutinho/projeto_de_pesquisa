@@ -137,7 +137,7 @@ def update_status():
     global data, arrayDadosPirometro, arrayDadosTermopar
 
     # Obter a mensagem atual
-    current_status_pirometro = statusPirometro["text"]
+    # current_status_pirometro = statusPirometro["text"]  # Pra que serve isso ?
 
     # Se a mensagem for "Trabalhando...", recomece com "trabalhando"
 
@@ -148,7 +148,7 @@ def update_status():
     statusPirometro["text"] = current_status_pirometro
 
     # Get the current message
-    current_status_termopar = statusTermopar["text"]
+    # current_status_termopar = statusTermopar["text"]  # Pra que serve isso ?
 
     # If the message is "Working...", start over with "Working"
 
