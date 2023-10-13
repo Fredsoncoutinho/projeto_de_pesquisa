@@ -181,7 +181,6 @@ def salvar_arquivo():
     except:
         temp = "Não foi possível salvar! Tente novamente"
         widt = 11 * len(temp)
-        print(widt)
         open_popup(temp, widt)
 
 def open_popup(msg, width):
