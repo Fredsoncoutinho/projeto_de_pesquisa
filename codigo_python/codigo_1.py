@@ -1,16 +1,16 @@
-import warnings
+from warnings import simplefilter
+import tkinter as tk
+import serial.tools.list_ports
+import win32com.client as win32
+import serial as sr
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
-import tkinter as tk
 from tkinter import filedialog
 from numpy import array, append, float_, arange, amax, amin, vectorize
-import serial as sr
-import serial.tools.list_ports
 from pandas import DataFrame, read_csv
-import win32com.client as win32
 from datetime import datetime
 
-warnings.simplefilter(action='ignore', category=FutureWarning)
+simplefilter(action='ignore', category=FutureWarning)
 
 # ------Variaveis globais
 arrayDadosTermopar = array([0])
