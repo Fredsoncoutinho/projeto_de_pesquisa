@@ -30,7 +30,6 @@ data = now.strftime("%d/%m/%Y %H:%M:%S")
 fig = Figure()
 
 ax1 = fig.add_subplot(211)
-
 ax1.set_title('Termopar (MAX6675)')
 ax1.set_xlabel('Tempo')
 ax1.set_ylabel('Temperadura °C')
@@ -38,9 +37,7 @@ ax1.set_xlim(0, 40)
 ax1.grid()
 
 fig.subplots_adjust(hspace=0.5)
-
 ax2 = fig.add_subplot(212)
-
 ax2.set_title('Pirômetro (MLX90614)')
 ax2.set_xlabel('Tempo')
 ax2.set_ylabel('Temperadura °C')
@@ -52,8 +49,8 @@ lines2 = ax2.plot([], [])[0]
 lines2 = ax2.plot([], [], color="r")[0]
 
 # -----------Salvar os dados em arquivo csv----------
-    #dat.to_csv("termopar",index = True, sep =" ")
-
+# dat.to_csv("termopar",index = True, sep =" ")
+1
 # -----Main GUI code-----
 root = tk.Tk()
 root.title('Plotagem em tempo real')
