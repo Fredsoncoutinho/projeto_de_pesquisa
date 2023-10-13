@@ -3,21 +3,20 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 from matplotlib.figure import Figure
 import tkinter as tk
 from tkinter import filedialog
-import numpy as np
+from numpy import array, append, float_, arange, amax, amin, vectorize
 import serial as sr
 import serial.tools.list_ports
-import pandas as pd
+from pandas import DataFrame, read_csv
 import win32com.client as win32
 from datetime import datetime
-from functions import *
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # ------Variaveis globais
-arrayDadosTermopar = np.array([0])
-arrayDadosPirometro = np.array([0])
+arrayDadosTermopar = array([0])
+arrayDadosPirometro = array([0])
 cols = ['Termopar', 'Pirometro(real)', 'Pirômetro(simulado)', 'Data/Hora']
-dat = pd.DataFrame(columns=cols)
+dat = DataFrame(columns=cols)
 sensores = 0
 cond = False
 
@@ -90,42 +89,42 @@ def primeiroGrafico(dadoTermopar):
     global arrayDadosTermopar
 
     if (len(arrayDadosTermopar) < 40):
-        arrayDadosTermopar = np.append(arrayDadosTermopar, float(dadoTermopar))
-        limiteMaximo = round(np.amax(arrayDadosTermopar, axis=0))
-        limiteMinimo = round(np.amin(arrayDadosTermopar, axis=0))
+        arrayDadosTermopar = append(arrayDadosTermopar, float(dadoTermopar))
+        limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
+        limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
         ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
 
     else:
-        limiteMaximo = round(np.amax(arrayDadosTermopar, axis=0))
-        limiteMinimo = round(np.amin(arrayDadosTermopar, axis=0))
+        limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
+        limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
         ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
 
         arrayDadosTermopar[0:39] = arrayDadosTermopar[1:40]
         arrayDadosTermopar[39] = float(dadoTermopar)
 
-    lines1.set_xdata(np.arange(0, len(arrayDadosTermopar)))
+    lines1.set_xdata(arange(0, len(arrayDadosTermopar)))
     lines1.set_ydata(arrayDadosTermopar)
 
 
 def segundoGrafico(dadoPirometro):
     global arrayDadosPirometro
     if (len(arrayDadosPirometro) < 40):
-        arrayDadosPirometro = np.append(
+        arrayDadosPirometro = append(
             arrayDadosPirometro, float(dadoPirometro))
 
-        limiteMaximo = round(np.amax(arrayDadosPirometro, axis=0))
-        limiteMinimo = round(np.amin(arrayDadosPirometro, axis=0))
+        limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
+        limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
 
         ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
 
     else:
-        limiteMaximo = round(np.amax(arrayDadosPirometro, axis=0))
-        limiteMinimo = round(np.amin(arrayDadosPirometro, axis=0))
+        limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
+        limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
         ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
 
         arrayDadosPirometro[0:39] = arrayDadosPirometro[1:40]
         arrayDadosPirometro[39] = float(dadoPirometro)
-    lines2.set_xdata(np.arange(0, len(arrayDadosPirometro)))
+    lines2.set_xdata(arange(0, len(arrayDadosPirometro)))
     lines2.set_ydata(arrayDadosPirometro)
 
 
@@ -148,8 +147,8 @@ def plot_data():
             # print('pirometro: ', (dadoPirometro))
 
             # Abre o aqquivo de solução
-            z = pd.read_csv('solucao', sep=' ', index_col=False)
-            vector = np.vectorize(np.float_)
+            z = read_csv('solucao', sep=' ', index_col=False)
+            vector = vectorize(float_)
             y = z.to_numpy()
             solucao = vector(y)
 
@@ -157,7 +156,7 @@ def plot_data():
             sens = float(dadoPirometro)
             # sens = 27.5
             # Implementa a correção
-            F = lambda pos, sens: np.array([1, pos, sens, pos ** 2, sens ** 2, pos * sens]) @ solucao
+            F = lambda pos, sens: array([1, pos, sens, pos ** 2, sens ** 2, pos * sens]) @ solucao
             correcao = F(pos, sens)
 
             # print("%.2f"%correcao)
