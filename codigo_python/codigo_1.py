@@ -1,8 +1,8 @@
-from warnings import simplefilter
+# import win32com.client as win32
+# import serial as sr
 import tkinter as tk
-import serial.tools.list_ports
-import win32com.client as win32
-import serial as sr
+from serial.tools import list_ports
+from warnings import simplefilter
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
 from tkinter import filedialog
@@ -221,7 +221,7 @@ root = tk.Tk()
 root.title('Plotagem em tempo real')
 
 # cria menu suspenso com as portas disponíveis
-ports = list(serial.tools.list_ports.comports())
+ports = list(list_ports.comports())
 if len(ports) != 0:
     ports_list = [port.device for port in ports]
 else:
