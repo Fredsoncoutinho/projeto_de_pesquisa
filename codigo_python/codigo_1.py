@@ -224,7 +224,7 @@ ports = list(list_ports.comports())
 if len(ports) != 0:
     ports_list = [port.device for port in ports]
 else:
-    ports_list = [1]
+    ports_list = ["---"]
 selected_port = tk.StringVar(root)
 selected_port.set(ports_list[0])  # seleciona a primeira porta por padrão
 port_menu = tk.OptionMenu(root, selected_port, *ports_list)
@@ -249,7 +249,7 @@ start.pack(side=tk.LEFT)
 
 root.update()
 stop = tk.Button(root, text="Parar", font=(
-    'calbiri', 12), command=lambda: plot_stop())
+    'calbiri', 12), command = lambda: plot_stop())
 stop.pack(side=tk.LEFT)
 
 salvar = tk.Button(root, text="Salvar", font=(
