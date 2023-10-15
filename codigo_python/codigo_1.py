@@ -9,6 +9,7 @@ from tkinter import filedialog
 from numpy import array, append, float_, arange, amax, amin, vectorize
 from pandas import DataFrame, read_csv
 from datetime import datetime
+from serial import Serial
 
 simplefilter(action='ignore', category=FutureWarning)
 
@@ -24,17 +25,20 @@ cond = False
 now = datetime.now()
 data = now.strftime("%d/%m/%Y %H:%M:%S")
 
+
 # -----Funcoes ------
 
+
 def plot_start():
-    global cond
+    global cond, sensores
     cond = True
     try:
         sensores.reset_input_buffer()
     except:
         temp = "Não foi possível ligar os sensores"
-        widt = 11*len(temp)
+        widt = 11 * len(temp)
         open_popup(temp, widt)
+
 
 def plot_stop():
     global cond
@@ -75,10 +79,10 @@ def connect():
     global sensores
     port = selected_port.get()
     try:
-        sensores = serial.Serial(port, baudrate=9600, timeout=1)
+        sensores = Serial(port, baudrate=9600, timeout=1)
     except:
         temp = f"Não foi possível se conectar a porta {port}"
-        widt = 11*len(temp)
+        widt = 11 * len(temp)
         open_popup(temp, widt)
     else:
         porta = tk.Label(root, text="Conectado a porta: ", font=("Arial", 20))
@@ -88,7 +92,7 @@ def connect():
 def primeiroGrafico(dadoTermopar):
     global arrayDadosTermopar
 
-    if (len(arrayDadosTermopar) < 40):
+    if len(arrayDadosTermopar) < 40:
         arrayDadosTermopar = append(arrayDadosTermopar, float(dadoTermopar))
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
@@ -108,7 +112,7 @@ def primeiroGrafico(dadoTermopar):
 
 def segundoGrafico(dadoPirometro):
     global arrayDadosPirometro
-    if (len(arrayDadosPirometro) < 40):
+    if len(arrayDadosPirometro) < 40:
         arrayDadosPirometro = append(
             arrayDadosPirometro, float(dadoPirometro))
 
@@ -131,13 +135,15 @@ def segundoGrafico(dadoPirometro):
 def plot_data():
     global cond, data, dat
 
-    if (cond == True):
+    if cond:
         # -----------Variáveis dos que recebem os dados dos sensores---------
         try:
             primeiroDado = sensores.readline()
             segundoDado = sensores.readline()
         except:
-            open_popup("Não foi possível iniciar")
+            temp = "Não foi possível iniciar"
+            larg = 11 * len(temp)
+            open_popup(temp, larg)
         else:
             # -----------Decodificando as variáveis---------
             dadoTermopar = primeiroDado.decode('utf')
@@ -154,7 +160,7 @@ def plot_data():
 
             pos = 1.0
             sens = float(dadoPirometro)
-            # sens = 27.5
+            # sens = 27,5
             # Implementa a correção
             F = lambda pos, sens: array([1, pos, sens, pos ** 2, sens ** 2, pos * sens]) @ solucao
             correcao = F(pos, sens)
@@ -183,12 +189,14 @@ def salvar_arquivo():
         widt = 11 * len(temp)
         open_popup(temp, widt)
 
+
 def open_popup(msg, width):
     global root
     top = tk.Toplevel(root)
     top.geometry(f"{width}x100")
     top.title("Erro de porta")
-    tk.Label(top, text=msg , font=('Arial 14 bold')).place(x=20,y=30)
+    tk.Label(top, text=msg, font=('Arial 14 bold')).place(x=20, y=30)
+
 
 # -----plot data-----
 
@@ -244,12 +252,11 @@ canvas.draw()
 root.update()
 start = tk.Button(root, text="Iniciar", font=(
     'calbiri', 12), command=lambda: plot_start())
-
 start.pack(side=tk.LEFT)
 
 root.update()
 stop = tk.Button(root, text="Parar", font=(
-    'calbiri', 12), command = lambda: plot_stop())
+    'calbiri', 12), command=lambda: plot_stop())
 stop.pack(side=tk.LEFT)
 
 salvar = tk.Button(root, text="Salvar", font=(
