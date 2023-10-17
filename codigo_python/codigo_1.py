@@ -1,6 +1,5 @@
 # import win32com.client as win32
 # import serial as sr
-import tkinter as tk
 from serial.tools import list_ports
 from warnings import simplefilter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
