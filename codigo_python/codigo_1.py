@@ -29,11 +29,12 @@ data = now.strftime("%d/%m/%Y %H:%M:%S")
 # -----Funcoes ------
 
 
-def plot_start():
-    global cond, sensores
+def plot_start(sensores):
+    global cond
     cond = True
     try:
         sensores.reset_input_buffer()
+        print("Resetado")
     except:
         temp = "Não foi possível ligar os sensores"
         widt = 11 * len(temp)
@@ -180,18 +181,17 @@ def plot_data():
             root.after(200, plot_data)
 
 
-def salvar_arquivo():
+def salvar_arquivo(root):
     file_path = filedialog.asksaveasfilename(defaultextension='.csv')
     try:
         dat.to_csv(file_path, index=False, sep=" ")
     except:
         temp = "Não foi possível salvar! Tente novamente"
         widt = 11 * len(temp)
-        open_popup(temp, widt)
+        open_popup(temp, widt, root)
 
 
-def open_popup(msg, width):
-    global root
+def open_popup(msg, width, root):
     top = tk.Toplevel(root)
     top.geometry(f"{width}x100")
     top.title("Erro de porta")
@@ -251,7 +251,7 @@ canvas.draw()
 # ----------Criação dos botões---------
 root.update()
 start = tk.Button(root, text="Iniciar", font=(
-    'calbiri', 12), command=lambda: plot_start())
+    'calbiri', 12), command=lambda: plot_start(sensores))
 start.pack(side=tk.LEFT)
 
 root.update()
@@ -260,7 +260,7 @@ stop = tk.Button(root, text="Parar", font=(
 stop.pack(side=tk.LEFT)
 
 salvar = tk.Button(root, text="Salvar", font=(
-    'calbiri', 12), command=lambda: salvar_arquivo())
+    'calbiri', 12), command=lambda: salvar_arquivo(root))
 salvar.pack(side=tk.LEFT)
 
 statusTermopar = tk.Label(root, text="Termopar: C°", font=("Arial", 20))
