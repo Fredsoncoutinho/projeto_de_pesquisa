@@ -176,10 +176,6 @@ def salvar_arquivo(root):
         widt = 11 * len(temp)
         open_popup(temp, widt, root)
 
-
-
-
-
 # -----plot data-----
 
 fig = Figure()
