@@ -3,20 +3,21 @@
 import tkinter as tk
 from serial.tools import list_ports
 from warnings import simplefilter
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from tkinter import filedialog
 from numpy import array, append, float_, arange, amax, amin, vectorize
 from pandas import DataFrame, read_csv
 from datetime import datetime
 from serial import Serial
+from functions import *
 
 simplefilter(action='ignore', category=FutureWarning)
 
 # ------Variaveis globais
-arrayDadosTermopar = array([0])
-arrayDadosPirometro = array([0])
-cols = ['Termopar', 'Pirometro(real)', 'Pirômetro(simulado)', 'Data/Hora']
+arrayDadosTermopar = [0]
+arrayDadosPirometro = [0]
+cols = ['Termopar', 'Pirometro(real)']
 dat = DataFrame(columns=cols)
 sensores = 0
 cond = False
@@ -34,11 +35,11 @@ def plot_start(sensores):
     cond = True
     try:
         sensores.reset_input_buffer()
-        print("Resetado")
+        plot_data()
     except:
         temp = "Não foi possível ligar os sensores"
         widt = 11 * len(temp)
-        open_popup(temp, widt)
+        open_popup(temp, widt, root)
 
 
 def plot_stop():
@@ -58,7 +59,7 @@ def update_status():
     current_status_pirometro = arrayDadosPirometro[arrayDadosPirometro_lenght - 1]
 
     # Atualiza a mensagem
-    statusPirometro["text"] = current_status_pirometro
+    statusPirometro["text"] = f"{current_status_pirometro:3.2f}"
 
     # Get the current message
     current_status_termopar = statusTermopar["text"]
@@ -69,7 +70,7 @@ def update_status():
     current_status_termopar = arrayDadosTermopar[arrayDadosTermopar_lenght - 1]
 
     # Update the message
-    statusTermopar["text"] = current_status_termopar
+    statusTermopar["text"] = f"{current_status_termopar:3.2f}"
 
     # After 1 second, update the status
     root.after(200, update_status)
@@ -84,9 +85,10 @@ def connect():
     except:
         temp = f"Não foi possível se conectar a porta {port}"
         widt = 11 * len(temp)
-        open_popup(temp, widt)
+        open_popup(temp, widt, root)
     else:
         porta = tk.Label(root, text="Conectado a porta: ", font=("Arial", 20))
+        porta["text"] += port
         porta.pack()
 
 
@@ -94,11 +96,10 @@ def primeiroGrafico(dadoTermopar):
     global arrayDadosTermopar
 
     if len(arrayDadosTermopar) < 40:
-        arrayDadosTermopar = append(arrayDadosTermopar, float(dadoTermopar))
+        arrayDadosTermopar.append(dadoTermopar)
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
         ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
-
     else:
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
@@ -143,42 +144,28 @@ def plot_data():
             segundoDado = sensores.readline()
         except:
             temp = "Não foi possível iniciar"
+            print(temp)
             larg = 11 * len(temp)
-            open_popup(temp, larg)
+            open_popup(temp, larg, root)
         else:
             # -----------Decodificando as variáveis---------
             dadoTermopar = primeiroDado.decode('utf')
             dadoPirometro = segundoDado.decode('utf')
-
-            # print('termopar: ', (dadoTermopar))
-            # print('pirometro: ', (dadoPirometro))
-
-            # Abre o aqquivo de solução
-            z = read_csv('solucao', sep=' ', index_col=False)
-            vector = vectorize(float_)
-            y = z.to_numpy()
-            solucao = vector(y)
-
-            pos = 1.0
-            sens = float(dadoPirometro)
-            # sens = 27,5
-            # Implementa a correção
-            F = lambda pos, sens: array([1, pos, sens, pos ** 2, sens ** 2, pos * sens]) @ solucao
-            correcao = F(pos, sens)
-
-            # print("%.2f"%correcao)
+            dadoTermopar = float(dadoTermopar)
+            dadoPirometro = float(dadoPirometro)
+            #print(f'termopar: {dadoTermopar}')
+            #print(f'pirometro: {dadoPirometro}')
             primeiroGrafico(dadoTermopar)
-            segundoGrafico("%.2f" % correcao)
-
+            segundoGrafico(dadoPirometro)
             # ----------Acessa a função pandas para plotar as strings com os dados dos sensores--------
-            dat = dat.append({'Termopar': dadoTermopar[0:5], 'Pirometro(real)': dadoPirometro[0:5],
-                              'Pirometro(simulado)': "%.2f" % correcao, 'Data/Hora': data}, ignore_index=True)
-
-            # print(dat)
-
+            novos_dados = {
+                'Termopar': [dadoTermopar],
+                'Pirometro(real)': [dadoPirometro]
+            }
+            dat._append(novos_dados, ignore_index=True)
             canvas.draw()
-
             root.after(200, plot_data)
+
 
 
 def salvar_arquivo(root):
@@ -191,11 +178,7 @@ def salvar_arquivo(root):
         open_popup(temp, widt, root)
 
 
-def open_popup(msg, width, root):
-    top = tk.Toplevel(root)
-    top.geometry(f"{width}x100")
-    top.title("Erro de porta")
-    tk.Label(top, text=msg, font=('Arial 14 bold')).place(x=20, y=30)
+
 
 
 # -----plot data-----
@@ -219,9 +202,6 @@ ax2.grid()
 
 lines1 = ax1.plot([], [])[0]  # variaveis que recebe os valores de x e de y
 lines2 = ax2.plot([], [], color="r")[0]
-
-# -----------Salvar os dados em arquivo csv----------
-# dat.to_csv("termopar",index = True, sep =" ")
 
 # -----Main GUI code-----
 root = tk.Tk()
@@ -274,22 +254,6 @@ statusPirometro.pack(side=tk.LEFT)
 
 statusPirometro = tk.Label(root, text="Esperando dados", font=("Arial", 20))
 statusPirometro.pack(side=tk.LEFT)
-
-# ----Inicia a porta serial----
-'''''''''''''''''''''
-try:
-    sensores = sr.Serial('COM11', 9600)
-    sensores.reset_input_buffer()
-
-except sr.serialutil.SerialException:
-    error = tk.Label(
-        root, text="Arduino não conectado, por favor verifique a porta", font=("Arial", 20))
-    error.pack(side=tk.TOP)
-    print("Arduino não conectado, por favor verifique a porta")
-
-'''''''''''''''''''''
-
-# posição = motor.readline()
 
 root.after(1, update_status)
 root.after(1, plot_data)
