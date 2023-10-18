@@ -14,22 +14,23 @@ from functions import *
 simplefilter(action='ignore', category=FutureWarning)
 
 # ------Variaveis globais
-arrayDadosTermopar = [0]
-arrayDadosPirometro = [0]
-cols = ['Termopar', 'Pirometro(real)']
-dat = DataFrame(columns=cols)
-sensores = 0
-cond = False
+arrayDadosTermopar = [0]                 # Lista com os dados recebidos do termopar
+arrayDadosPirometro = [0]                # Lista com os dados recebidos do pirômetro
+cols = ['Termopar', 'Pirometro(real)']   # Variável com os rótulos do dataframe
+dat = DataFrame(columns=cols)            # Variável dataframe do pandas
+sensores = 0                             # Variável que vai receber os sensores
+cond = False                             # Variável que controlao início do plot
 
 # ------Variável de data para armazenar o tempo 
 now = datetime.now()
 data = now.strftime("%d/%m/%Y %H:%M:%S")
 
-
 # -----Funcoes ------
-
-
 def plot_start(sensores):
+    """
+    Função para iniciar o plot
+    :param sensores: os sensores que recebem os dados
+    """
     global cond
     cond = True
     try:
@@ -42,6 +43,9 @@ def plot_start(sensores):
 
 
 def plot_stop():
+    """
+    Função para parar o plot
+    """
     global cond
     print(arrayDadosPirometro)
     print(arrayDadosTermopar)
@@ -53,8 +57,6 @@ def update_status():
 
     # Obter a mensagem atual
     current_status_pirometro = statusPirometro["text"]
-
-    # Se a mensagem for "Trabalhando...", recomece com "trabalhando"
 
     arrayDadosPirometro_lenght = len(arrayDadosPirometro)
     current_status_pirometro = arrayDadosPirometro[arrayDadosPirometro_lenght - 1]
@@ -99,11 +101,11 @@ def primeiroGrafico(dadoTermopar):
         arrayDadosTermopar.append(dadoTermopar)
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
-        ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
+        ax1.set_ylim(limiteMinimo - 10, limiteMaximo + 10)
     else:
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
-        ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
+        ax1.set_ylim(limiteMinimo - 10, limiteMaximo + 10)
         arrayDadosTermopar[0:39] = arrayDadosTermopar[1:40]
         arrayDadosTermopar[39] = float(dadoTermopar)
     lines1.set_xdata(arange(0, len(arrayDadosTermopar)))
@@ -116,11 +118,11 @@ def segundoGrafico(dadoPirometro):
         arrayDadosPirometro.append(dadoPirometro)
         limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
         limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
-        ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
+        ax2.set_ylim(limiteMinimo - 10, limiteMaximo + 10)
     else:
         limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
         limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
-        ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
+        ax2.set_ylim(limiteMinimo - 10, limiteMaximo + 10)
         arrayDadosPirometro[0:39] = arrayDadosPirometro[1:40]
         arrayDadosPirometro[39] = float(dadoPirometro)
     lines2.set_xdata(arange(0, len(arrayDadosPirometro)))
