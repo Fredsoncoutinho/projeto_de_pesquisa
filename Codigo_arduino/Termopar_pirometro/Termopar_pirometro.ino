@@ -18,8 +18,6 @@ void setup() {
 void loop() {
   String dados_termopar = String(ktc.readCelsius());
   String dados_pirometro = String(mlx.readObjectTempC());
-  // temp_amb = mlx.readAmbientTempC();
-  // temp_obj = mlx.readObjectTempC();
   if (dados_termopar.equals("nan") || dados_termopar.equals("NAN") ) {
     dados_termopar = "0.0";
     Serial.println(dados_termopar);
@@ -29,7 +27,6 @@ void loop() {
     Serial.println(dados_termopar);
     Serial.println(temp_obj);
   }
-  //Serial.print("Temperatura: "); //IMPRIME O TEXTO NO MONITOR SERIAL
-  Serial.println(ktc.readCelsius()); //IMPRIME NO MONITOR SERIAL A TEMPERATURA MEDIDA
+  
   delay(200);  //INTERVALO DE 200 MILISSEGUNDOS}
 }
