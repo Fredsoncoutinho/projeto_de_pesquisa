@@ -18,8 +18,8 @@ void setup() {
 void loop() {
   String dados_termopar = String(ktc.readCelsius());
   String dados_pirometro = String(mlx.readObjectTempC());
- // temp_amb = mlx.readAmbientTempC();
-  temp_obj = mlx.readObjectTempC();
+  // temp_amb = mlx.readAmbientTempC();
+  // temp_obj = mlx.readObjectTempC();
   if (dados_termopar.equals("nan") || dados_termopar.equals("NAN") ) {
     dados_termopar = "0.0";
     Serial.println(dados_termopar);

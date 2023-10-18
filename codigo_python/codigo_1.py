@@ -43,6 +43,8 @@ def plot_start(sensores):
 
 def plot_stop():
     global cond
+    print(arrayDadosPirometro)
+    print(arrayDadosTermopar)
     cond = False
 
 
@@ -93,7 +95,6 @@ def connect():
 
 def primeiroGrafico(dadoTermopar):
     global arrayDadosTermopar
-
     if len(arrayDadosTermopar) < 40:
         arrayDadosTermopar.append(dadoTermopar)
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
@@ -103,10 +104,8 @@ def primeiroGrafico(dadoTermopar):
         limiteMaximo = round(amax(arrayDadosTermopar, axis=0))
         limiteMinimo = round(amin(arrayDadosTermopar, axis=0))
         ax1.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
-
         arrayDadosTermopar[0:39] = arrayDadosTermopar[1:40]
         arrayDadosTermopar[39] = float(dadoTermopar)
-
     lines1.set_xdata(arange(0, len(arrayDadosTermopar)))
     lines1.set_ydata(arrayDadosTermopar)
 
@@ -114,19 +113,14 @@ def primeiroGrafico(dadoTermopar):
 def segundoGrafico(dadoPirometro):
     global arrayDadosPirometro
     if len(arrayDadosPirometro) < 40:
-        arrayDadosPirometro = append(
-            arrayDadosPirometro, float(dadoPirometro))
-
+        arrayDadosPirometro.append(dadoPirometro)
         limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
         limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
-
         ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
-
     else:
         limiteMaximo = round(amax(arrayDadosPirometro, axis=0))
         limiteMinimo = round(amin(arrayDadosPirometro, axis=0))
         ax2.set_ylim(limiteMinimo - 20, limiteMaximo + 20)
-
         arrayDadosPirometro[0:39] = arrayDadosPirometro[1:40]
         arrayDadosPirometro[39] = float(dadoPirometro)
     lines2.set_xdata(arange(0, len(arrayDadosPirometro)))
