@@ -23,7 +23,7 @@ cond = False                             # Variável que controlao início do pl
 
 # ------Variável de data para armazenar o tempo 
 now = datetime.now()
-data = now.strftime("%d/%m/%Y %H:%M:%S")
+data = now.strftime("%d/%m/%Y %H:%M:%S")#tempo
 
 # -----Funcoes ------
 def plot_start(sensores):
