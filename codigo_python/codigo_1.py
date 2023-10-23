@@ -80,10 +80,13 @@ def update_status():
 
 # Função para configurar a comunicação serial com a porta selecionada
 def connect():
+    """
+    Função para conectar a comunicação serial do arduino com a interface
+    """
     global sensores
     port = selected_port.get()
     try:
-        sensores = Serial(port, baudrate=9600, timeout=1)
+        sensores = Serial(port, baudrate=9600, timeout=1) # Estabelece a conexão com o Arduino
     except:
         temp = f"Não foi possível se conectar a porta {port}"
         widt = 11 * len(temp)
@@ -95,6 +98,10 @@ def connect():
 
 
 def primeiroGrafico(dadoTermopar):
+    """
+    Função para gerar o gráfico do Termopar
+    :param dadoTermopar: os dados recebidos pelo termopar
+    """
     global arrayDadosTermopar
     if len(arrayDadosTermopar) < 40:
         arrayDadosTermopar.append(dadoTermopar)
@@ -112,6 +119,10 @@ def primeiroGrafico(dadoTermopar):
 
 
 def segundoGrafico(dadoPirometro):
+    """
+    Função para gerar o gráfico do Pirometro
+    :param dadoPirometro: os dados recebidos pelo pirometro
+    """
     global arrayDadosPirometro
     if len(arrayDadosPirometro) < 40:
         arrayDadosPirometro.append(dadoPirometro)
@@ -129,6 +140,9 @@ def segundoGrafico(dadoPirometro):
 
 
 def plot_data():
+    """
+    Função para mostrar os gráficos na tela
+    """
     global cond, data, dat
 
     if cond:
@@ -163,6 +177,10 @@ def plot_data():
 
 
 def salvar_arquivo(root):
+    """
+    Função para salvar os dados em um arquivo
+    :param root: tela onde o popup será mostrado
+    """
     file_path = filedialog.asksaveasfilename(defaultextension='.csv')
     try:
         dat.to_csv(file_path, index=False, sep=" ")
