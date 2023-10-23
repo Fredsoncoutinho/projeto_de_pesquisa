@@ -1,5 +1,3 @@
-# import win32com.client as win32
-# import serial as sr
 import tkinter as tk
 from time import sleep
 from serial.tools import list_ports
