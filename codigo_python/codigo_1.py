@@ -1,5 +1,7 @@
 # import win32com.client as win32
 # import serial as sr
+import tkinter as tk
+from time import sleep
 from serial.tools import list_ports
 from warnings import simplefilter
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -9,7 +11,6 @@ from numpy import array, append, float_, arange, amax, amin, vectorize
 from pandas import DataFrame, read_csv
 from datetime import datetime
 from serial import Serial
-from functions import *
 
 simplefilter(action='ignore', category=FutureWarning)
 
@@ -171,6 +172,31 @@ def salvar_arquivo(root):
         temp = "Não foi possível salvar! Tente novamente"
         widt = 11 * len(temp)
         open_popup(temp, widt, root)
+
+def check_ports():
+    """
+    Função para checar se existem portas conectadas
+    :return: Retorna a lista das portas conectadas
+    """
+    ports = list(list_ports.comports())
+    if len(ports) != 0:
+        ports_list = [port.device for port in ports]
+    else:
+        ports_list = ["---"]
+    return ports_list
+
+
+def open_popup(msg, width, root):
+    """
+    Função para mostrar um popup na tela
+    :param msg: Texto apresentado no popup
+    :param width: Tamanho usado para dimensionar a tela
+    :param root: Janela onde vai ser apresentada
+    """
+    top = tk.Toplevel(root)
+    top.geometry(f"{width}x100")
+    top.title("Erro de porta")
+    tk.Label(top, text=msg, font=('Arial 14 bold')).place(x=20, y=30)
 
 # -----plot data-----
 
